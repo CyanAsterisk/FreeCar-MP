@@ -1,8 +1,4 @@
-# .github
-
-[English](README.md) | 中文
-
-Money is cheap, show me the code.
+![FreeCar-MP](images/doc/FreeCar%20MP.png)
 
 ## 许可证
 
