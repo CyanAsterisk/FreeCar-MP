@@ -19,3 +19,6 @@
 .vscode
 tmp
 *.log
+
+node_modules
+miniprogram_npm
