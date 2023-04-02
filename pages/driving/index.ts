@@ -1,7 +1,8 @@
-import { api } from "../../service/codegen/api_pb"
-import { TripService } from "../../service/trip"
+import { trip } from "../../service/gen/trip/trip_pb"
+import { TripService } from "../../service/pkg/trip"
 import { formatDuration, formatFee } from "../../utils/format"
 import { routing } from "../../utils/routing"
+import {common} from "../../service/gen/common/common_pb";
 
 const updateIntervalSec = 1
 const initialLat = 30
@@ -41,25 +42,25 @@ Page({
         this.tripID = o.trip_id
         if(!this.tripID){
             const trips = await TripService.getTrips({
-                status: api.TripStatus.IN_PROGRESS,
+                status: trip.TripStatus.IN_PROGRESS,
               })
-              if (trips.data!.trips?.length === 0) {
+              if (trips.trips?.length === 0) {
                  routing.trip()
               }
-              this.tripID = trips.data!.trips![0].id!
+              this.tripID = trips.trips![0].id!
         }
-        this.setupLocationUpdator()
-        this.setupTimer(this.tripID)
+        this.setupLocationUpdater()
+        await this.setupTimer(this.tripID)
     },
 
     onUnload() {
-        wx.stopLocationUpdate()
+        wx.stopLocationUpdate().then()
         if (this.timer) {
             clearInterval(this.timer)
         }
     },
 
-    setupLocationUpdator() {
+    setupLocationUpdater() {
         wx.startLocationUpdate({
             fail: console.error,
         })
@@ -74,23 +75,29 @@ Page({
     },
 
     async setupTimer(tripID: string) {
-        const trip = await TripService.getTrip(tripID)
-        if (trip.data!.status !== api.TripStatus.IN_PROGRESS) {
+        const resp = await TripService.getTrip({
+            id: tripID,
+        })
+        if (resp.baseResp!.statusCode !== common.Err.Success){
+            console.log('request error')
+            return
+        }
+        if (resp.trip!.status !== trip.TripStatus.IN_PROGRESS) {
             console.error('trip not in progress')
             return
         }
         let secSinceLastUpdate = 0
-        let lastUpdateDurationSec = trip.data!.current!.timestampSec! - trip.data!.start!.timestampSec!
-        const toLocation = (trip: api.IETrip) => ({
-            latitude: trip.data!.current?.location?.latitude || initialLat,
-            longitude: trip.data!.current?.location?.longitude || initialLng,
+        let lastUpdateDurationSec = resp.trip!.current!.timestampSec! - resp.trip!.start!.timestampSec!
+        const toLocation = (loc: trip.ILocation) => ({
+            latitude: loc.latitude || initialLat,
+            longitude: loc.longitude || initialLng,
         })
-        const location = toLocation(trip)
+        const location = toLocation(resp.trip!.current?.location!)
         this.data.markers[0].latitude = location.latitude
         this.data.markers[0].longitude = location.longitude
         this.setData({
             elapsed: durationStr(lastUpdateDurationSec),
-            fee: formatFee(trip.data!.current!.feeCent!),
+            fee: formatFee(resp.trip!.current!.feeCent!),
             location,
             markers: this.data.markers,
         })
@@ -98,15 +105,14 @@ Page({
         this.timer = setInterval(() => {
             secSinceLastUpdate++
             if (secSinceLastUpdate % updateIntervalSec === 0) {
-                TripService.getTrip(tripID).then(trip => {
-                    lastUpdateDurationSec = trip.data!.current!.timestampSec! - trip.data!.start!.timestampSec!
+                TripService.getTrip({id: tripID}).then(resp => {
+                    lastUpdateDurationSec = resp.trip!.current!.timestampSec! - resp.trip!.start!.timestampSec!
                     secSinceLastUpdate = 0
-                    const location = toLocation(trip)
-                    console.log(location)
+                    const location = toLocation(resp.trip?.current?.location!)
                     this.data.markers[0].latitude = location.latitude
                     this.data.markers[0].longitude = location.longitude
                     this.setData({
-                        fee: formatFee(trip.data!.current!.feeCent!),
+                        fee: formatFee(resp.trip!.current!.feeCent!),
                         location,
                         markers: this.data.markers,
                     })
@@ -122,20 +128,20 @@ Page({
         TripService.finishTrip(this.tripID,this.data.location).then(() => {
             wx.redirectTo({
                 url: routing.trip(),
-            })
+            }).then()
         }).catch(err => {
             console.error(err)
             wx.showToast({
                 title: '结束行程失败',
                 icon: 'none',
-            })
+            }).then()
         })
     },
 
     onHangUpTap(){
         wx.redirectTo({
             url: routing.index(),
-        })
+        }).then()
     },
 
     onMyLocationTap() {
@@ -151,9 +157,9 @@ Page({
           }, 
           fail: () => {
             wx.showToast({
-              icon: 'none',
-              title: '请前往设置页授权',
-            })
+                icon: 'none',
+                title: '请前往设置页授权',
+            }).then()
           }
         })
       },

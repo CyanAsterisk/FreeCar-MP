@@ -1,6 +1,6 @@
 import { getSetting, getUserInfo } from "./utils/wxapi"
 import {IAppOption} from "./appoption"
-import { FreeCar } from "./service/request"
+import { FreeCar } from "./service/pkg/request"
 let resolveUserInfo: (value: WechatMiniprogram.UserInfo | PromiseLike<WechatMiniprogram.UserInfo>) => void
 let rejectUserInfo: (reason?: any) => void
 
@@ -15,7 +15,7 @@ App<IAppOption>({
   async onLaunch() {
 
     //登录
-    FreeCar.login()
+    await FreeCar.login()
     
 
     // 获取用户信息

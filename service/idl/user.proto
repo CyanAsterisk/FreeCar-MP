@@ -1,0 +1,61 @@
+syntax = "proto3";
+package user;
+
+import "common.proto";
+
+message UserInfo{
+    int64 account_id = 1;
+    string username = 2;
+    int64 phone_number = 3;
+    string avatar_url = 4;
+}
+
+message User{
+  int64 account_id = 1;
+  string username = 2;
+  int64 phone_number = 3;
+  int64 avatar_blob_id = 4;
+  string open_id = 5;
+}
+
+message LoginRequest {
+  string code = 1;
+}
+
+message LoginResponse {
+  common.BaseResponse base_resp = 1;
+  string token = 2;
+}
+
+message GetUserInfoRequest{}
+
+message GetUserInfoResponse{
+  common.BaseResponse base_resp = 1;
+  UserInfo user_info = 2;
+}
+
+message UpdateUserRequest{
+  string username = 1;
+  int64 phone_number = 2;
+}
+
+message UpdateUserResponse{
+  common.BaseResponse base_resp = 1;
+}
+
+message UpdateUserByIDRequest{
+  string username = 1;
+  int64 phone_number = 2;
+  int64 account_id = 3;
+}
+
+message UpdateUserByIDResponse{
+  common.BaseResponse base_resp = 1;
+}
+
+message UploadAvatarRequest{}
+
+message UploadAvatarResponse{
+  common.BaseResponse base_resp = 1;
+  string upload_url = 2;
+}

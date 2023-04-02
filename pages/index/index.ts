@@ -1,4 +1,4 @@
-import { CarService } from "../../service/car"
+import { CarService } from "../../service/pkg/car"
 interface Marker {
   iconPath: string
   id: number

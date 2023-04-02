@@ -1,7 +1,7 @@
 import { formatDuration, formatFee ,formatDate} from "../../utils/format"
-import { api } from "../../service/codegen/api_pb"
-import { TripService } from "../../service/trip"
-import { CarService } from "../../service/car"
+import { trip } from "../../service/gen/trip/trip_pb"
+import { TripService } from "../../service/pkg/trip"
+import { CarService } from "../../service/pkg/car"
 
 
 interface Trip {
@@ -39,8 +39,8 @@ Page({
       wx.showLoading({
         title: '',
       })
-      const resp = await TripService.getTrips({status:api.TripStatus.FINISHED})
-      if (resp.code!= 0){
+      const resp = await TripService.getTrips({status:trip.TripStatus.FINISHED})
+      if (resp.baseResp?.statusCode !== 0){
          wx.hideLoading()
          wx.showToast({
           title: "获取行程记录失败",
@@ -49,7 +49,7 @@ Page({
          })
          return
       }
-      let ts = resp.data!.trips!
+      let ts = resp.trips!
       let  trips: Trip[] = []
       for(let trip of ts){
         const end = trip.trip?.end
@@ -66,7 +66,7 @@ Page({
         t.duration = `${dur.hh}时${dur.mm}分`
 
         const resp = await CarService.getCar({id:trip.trip!.carId!})
-        if (resp.code!= 0){
+        if (resp.baseResp?.statusCode != 0){
           wx.hideLoading()
           wx.showToast({
            title: "获取车辆信息失败",
@@ -75,13 +75,13 @@ Page({
           })
           return
        }
-        t.plateNum = resp.data?.plateNum!
+        t.plateNum = resp.car?.plateNum!
         trips.unshift(t)
       }
         this.setData({
           trips,
         })
-        wx.hideLoading()
+        await wx.hideLoading()
       }
     
 })

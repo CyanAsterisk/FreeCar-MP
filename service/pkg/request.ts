@@ -1,22 +1,22 @@
 import camelcaseKeys = require("camelcase-keys")
 const decamelizeKeysDeep = require('decamelize-keys-deep');
-import { api } from "./codegen/api_pb"
+import { user } from "../gen/user/user_pb"
+import {common} from "../gen/common/common_pb"
 
 export namespace FreeCar {
-    export const serverAddr = 'http://localhost:9900'
+    export const serverAddr = 'https://localhost:8080'
     export const wsAddr = 'ws://localhost:9090'
     const AUTH_ERR = 'AUTH_ERR'
 
     const authData = {
         token: '',
-        expiresAt: 0
     }
 
     export interface RequestOption<REQ, RES> {
-        method: 'GET'|'PUT'|'POST'|'DELETE'
+        method: 'GET' | 'PUT' | 'POST' | 'DELETE'
         path: string
         data?: REQ
-        respMarshaller: (r: object)=>RES
+        respMarshaller: (r: object) => RES
     }
 
     export interface AuthOption {
@@ -30,12 +30,11 @@ export namespace FreeCar {
             retryOnAuthError: true,
         }
         try {
-            await login()
             return sendRequest(o, authOpt)
-        } catch(err) {
+        } catch (err) {
             if (err === AUTH_ERR && authOpt.retryOnAuthError) {
                 authData.token = ''
-                authData.expiresAt = 0
+                await login()
                 return sendRequestWithAuthRetry(o, {
                     attachAuthHeader: authOpt.attachAuthHeader,
                     retryOnAuthError: false,
@@ -47,24 +46,20 @@ export namespace FreeCar {
     }
 
     export async function login() {
-        if (authData.token && authData.expiresAt >= Date.now()) {
-            return
-        }
         const wxResp = await wxLogin()
-        const resp = await sendRequest<api.ILoginRequest, api.IELoginResponse> ({
+        const resp = await sendRequest<user.ILoginRequest, user.ILoginResponse>({
             method: 'POST',
-            path: '/user/login',
+            path: '/login/user',
             data: {
                 code: wxResp.code,
             },
-            respMarshaller: api.ELoginResponse.fromObject
+            respMarshaller: user.LoginResponse.fromObject
         }, {
             attachAuthHeader: false,
             retryOnAuthError: false,
         })
-        if(resp.data){
-            authData.token = resp.data.token!
-            authData.expiresAt = resp.data.expiredAt!*1000
+        if (isSuccess(resp.baseResp)) {
+            authData.token = resp.token!
         }
     }
 
@@ -72,7 +67,7 @@ export namespace FreeCar {
         return new Promise((resolve, reject) => {
             const header: Record<string, any> = {}
             if (a.attachAuthHeader) {
-                if (authData.token && authData.expiresAt >= Date.now()) {
+                if (authData.token) {
                     header.authorization = 'Bearer ' + authData.token
                 } else {
                     reject(AUTH_ERR)
@@ -115,7 +110,8 @@ export namespace FreeCar {
         localPath: string
         url: string
     }
-    export function uploadfile(o: UploadFileOpts): Promise<void> {
+
+    export function uploadFile(o: UploadFileOpts): Promise<void> {
         const data = wx.getFileSystemManager().readFileSync(o.localPath)
         return new Promise((resolve, reject) => {
             wx.request({
@@ -132,5 +128,9 @@ export namespace FreeCar {
                 fail: reject,
             })
         })
+    }
+    export function isSuccess(baseResp: common.IBaseResponse | null | undefined): boolean {
+        if (baseResp === null || baseResp == undefined) return false;
+        else return baseResp.statusCode === common.Err.Success;
     }
 }

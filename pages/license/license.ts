@@ -1,6 +1,6 @@
-import { ProfileService } from "../../service/profile"
-import { api } from "../../service/codegen/api_pb"
-import { FreeCar } from "../../service/request"
+import { ProfileService } from "../../service/pkg/profile"
+import { profile } from "../../service/gen/profile/profile_pb"
+import { FreeCar } from "../../service/pkg/request"
 import { formatDate } from "../../utils/format"
 import { routing } from "../../utils/routing"
 
@@ -15,17 +15,17 @@ Page({
         genders: ['未知', '男', '女'],
         birthDate: '2000-01-01',
         licImgURL: '',
-        state: api.IdentityStatus[api.IdentityStatus.UNSUBMITTED],
+        state: profile.IdentityStatus[profile.IdentityStatus.UNSUBMITTED],
     },
 
-    renderProfile(p: api.IProfile) {
+    renderProfile(p: profile.IProfile) {
         this.renderIdentity(p.identity!)
         this.setData({
-            state: api.IdentityStatus[p.identityStatus||0],
+            state: profile.IdentityStatus[p.identityStatus||0],
         })
     },
 
-    renderIdentity(i?: api.IIdentity) {
+    renderIdentity(i?: profile.IIdentity) {
         this.setData({
             licNo: i?.licNumber||'',
             name: i?.name||'',
@@ -39,10 +39,10 @@ Page({
         if(o.redirect) {
             this.redirectURL = decodeURIComponent(o.redirect)
         }
-        ProfileService.getProfile().then(p => this.renderProfile(p.data!))
-        ProfileService.getProfilePhoto().then(p => {
+        ProfileService.getProfile().then(resp => this.renderProfile(<profile.IProfile>resp.profile))
+        ProfileService.getProfilePhoto().then(resp => {
             this.setData({
-                licImgURL: p.data!.url||'',
+                licImgURL: resp.url||'',
             })
         })
     },
@@ -57,15 +57,15 @@ Page({
                     licImgURL:res.tempFiles[0].tempFilePath
                 })
                 const photoRes = await ProfileService.createProfilePhoto()
-                if (!photoRes.data!.uploadUrl) {
+                if (!photoRes!.uploadUrl) {
                     return
                 }
-                await FreeCar.uploadfile({
+                await FreeCar.uploadFile({
                     localPath: res.tempFiles[0].tempFilePath,
-                    url: photoRes.data!.uploadUrl,
+                    url: photoRes!.uploadUrl,
                 })
-                const identity = await ProfileService.completeProfilePhoto()
-                this.renderIdentity(identity.data!)
+                const resp = await ProfileService.completeProfilePhoto()
+                this.renderIdentity(resp.identity!)
             }
         })
     },
@@ -92,7 +92,7 @@ Page({
                 }
             }
         ).then(p => {
-            this.renderProfile(p.data!)
+            this.renderProfile(p.profile!)
             this.scheduleProfileRefresher()
         })
     },
@@ -104,11 +104,11 @@ Page({
     scheduleProfileRefresher() {
         this.profileRefresher = setInterval(() => {
             ProfileService.getProfile().then(p => {
-                this.renderProfile(p.data!)
-                if (p.data!.identityStatus !== api.IdentityStatus.PENDING) {
+                this.renderProfile(p.profile!)
+                if (p.profile!.identityStatus !== profile.IdentityStatus.PENDING) {
                     this.clearProfileRefresher()
                 }
-                if (p.data!.identityStatus === api.IdentityStatus.VERIFIED) {
+                if (p.profile!.identityStatus === profile.IdentityStatus.VERIFIED) {
                     this.onLicVerified()
                 }
             })
@@ -123,7 +123,7 @@ Page({
     },
 
     onResubmit() {
-        ProfileService.clearProfile().then(p => this.renderProfile(p.data!))
+        ProfileService.clearProfile().then(p => this.renderProfile(p.profile!))
         ProfileService.clearProfilePhoto().then(() => {
             this.setData({
                 licImgURL: '',

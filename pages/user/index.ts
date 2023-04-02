@@ -1,12 +1,12 @@
-import { ProfileService } from "../../service/profile"
-import { AuthService } from "../../service/user"
-import { api } from "../../service/codegen/api_pb"
-import { FreeCar } from "../../service/request"
+import { ProfileService } from "../../service/pkg/profile"
+import { UserService } from "../../service/pkg/user"
+import { profile } from "../../service/gen/profile/profile_pb"
+import { FreeCar } from "../../service/pkg/request"
 
 const licStatusMap = new Map([
-  [api.IdentityStatus.UNSUBMITTED, '未认证'],
-  [api.IdentityStatus.PENDING, '未认证'],
-  [api.IdentityStatus.VERIFIED, '已认证'],
+  [profile.IdentityStatus.UNSUBMITTED, '未认证'],
+  [profile.IdentityStatus.PENDING, '未认证'],
+  [profile.IdentityStatus.VERIFIED, '已认证'],
 ])
 
 Page({
@@ -15,11 +15,11 @@ Page({
     accountID: 0,
     avatarURL: '',
     phoneNum: 0,
-    licStatus: licStatusMap.get(api.IdentityStatus.UNSUBMITTED),
+    licStatus: licStatusMap.get(profile.IdentityStatus.UNSUBMITTED),
   },
 	async onLoad() {
-    let resp = await AuthService.getUserInfo()
-    if (resp.code !== 0){
+    let resp = await UserService.getUserInfo()
+    if (resp.baseResp?.statusCode !== 0){
       wx.showToast({
         title:"获取用户信息失败",
         icon: "none",
@@ -28,16 +28,16 @@ Page({
       return
     }
     this.setData({
-      username: resp.data?.username!,
-      accountID: resp.data?.accountId!,
-      avatarURL: resp.data?.avatarUrl!,
-      phoneNum: resp.data?.phoneNumber!
+      username: resp.userInfo?.username!,
+      accountID: resp.userInfo?.accountId!,
+      avatarURL: resp.userInfo?.avatarUrl!,
+      phoneNum: resp.userInfo?.phoneNumber!
     })
 	},
   onShow() {
     ProfileService.getProfile().then(p => {
       this.setData({
-          licStatus: licStatusMap.get(p.data!.identityStatus||0),
+          licStatus: licStatusMap.get(p.profile?.identityStatus||0),
       })
   })
   },
@@ -47,8 +47,8 @@ Page({
     this.setData({
       avatarURL: localPath
     })
-    const resp = await AuthService.uploadAvatar()
-    if(resp.code !== 0){
+    const resp = await UserService.uploadAvatar()
+    if(resp.baseResp !== 0){
       wx.showToast({
         title: '获取上传链接失败',
         icon: 'none',
@@ -56,9 +56,9 @@ Page({
       })
       return
     }
-    await FreeCar.uploadfile({
+    await FreeCar.uploadFile({
       localPath: localPath,
-      url: resp.data!.uploadUrl!,
+      url: resp.uploadUrl!,
     })
     
   },
@@ -82,13 +82,13 @@ Page({
       })
       return
     }
-    const res = await AuthService.updateUserInfo({
+    const res = await UserService.updateUserInfo({
       username: this.data.username
     })
 
-    if (res.code != 0){
+    if (res.baseResp?.statusCode != 0){
       wx.showToast({
-        title: res.message!,
+        title: res.baseResp?.statusMsg!,
         icon: 'none'
       })
       return

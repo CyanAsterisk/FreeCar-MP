@@ -1,0 +1,77 @@
+syntax = "proto3";
+package profile;
+
+import "common.proto";
+
+enum Gender {
+    G_NOT_SPECIFIED = 0;
+    MALE = 1;
+    FEMALE = 2;
+}
+  
+enum IdentityStatus {
+  UNSUBMITTED = 0;
+  PENDING = 1;
+  VERIFIED = 2;
+}
+
+message Profile {
+  Identity identity = 1;
+  IdentityStatus identity_status = 2;
+}
+
+message Identity {
+  string lic_number = 1;
+  string name = 2;
+  Gender gender = 3;
+  int64 birth_date_millis = 4;
+}
+
+message GetProfileRequest {}
+
+message GetProfileResponse{
+  common.BaseResponse base_resp = 1;
+  Profile profile = 2;
+}
+
+message SubmitProfileRequest {
+  Identity identity = 2;
+}
+
+message SubmitProfileResponse{
+  common.BaseResponse base_resp = 1;
+  Profile profile = 2;
+}
+
+message ClearProfileRequest {}
+
+message ClearProfileResponse{
+  common.BaseResponse base_resp = 1;
+  Profile profile = 2;
+}
+
+message GetProfilePhotoRequest {}
+
+message GetProfilePhotoResponse {
+  common.BaseResponse base_resp = 1;
+  string url = 2;
+}
+message CreateProfilePhotoRequest {}
+
+message CreateProfilePhotoResponse {
+  common.BaseResponse base_resp = 1;
+  string upload_url = 2;
+}
+
+message CompleteProfilePhotoRequest {}
+
+message CompleteProfilePhotoResponse{
+  common.BaseResponse base_resp = 1;
+  Identity identity = 2;
+}
+
+message ClearProfilePhotoRequest {}
+
+message ClearProfilePhotoResponse {
+  common.BaseResponse base_resp = 1;
+}

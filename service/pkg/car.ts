@@ -1,15 +1,15 @@
 import camelcaseKeys = require("camelcase-keys");
-import { api } from "./codegen/api_pb";
+import { car } from "../gen/car/car_pb";
 import { FreeCar } from "./request";
 
 export namespace CarService {
-    export function subscribe(onMsg: (c: api.ICarEntity) => void) {
+    export function subscribe(onMsg: (c: car.ICarEntity) => void) {
         const socket = wx.connectSocket({
             url: FreeCar.wsAddr + '/ws',
         })
         socket.onMessage(msg => {
             const obj = JSON.parse(msg.data as string)
-            onMsg(api.CarEntity.fromObject(
+            onMsg(car.CarEntity.fromObject(
                 camelcaseKeys(obj, {
                     deep: true,
                 })))
@@ -17,20 +17,20 @@ export namespace CarService {
         return socket
     }
 
-    export function getCar(req: api.IGetCarRequest): Promise<api.IECar> {
+    export function getCar(req: car.IGetCarRequest): Promise<car.IGetCarResponse> {
         return FreeCar.sendRequestWithAuthRetry({
             method: 'GET',
             path: `/car`,
-            data:req,
-            respMarshaller: api.ECar.fromObject,
+            data: req,
+            respMarshaller: car.GetCarResponse.fromObject,
         })
     }
 
-    export function getCars(): Promise<api.EGetCarsResponse> {
+    export function getCars(): Promise<car.IGetCarsResponse> {
         return FreeCar.sendRequestWithAuthRetry({
             method: 'GET',
             path: `/cars`,
-            respMarshaller: api.EGetCarsResponse.fromObject,
+            respMarshaller: car.GetCarsResponse.fromObject,
         })
     }
 }
