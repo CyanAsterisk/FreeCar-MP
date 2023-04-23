@@ -1,0 +1,114 @@
+/* 适配 iPhone X */
+.container {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.chat-box {
+  flex: 1;
+  padding: 10rpx env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  box-sizing: border-box;
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 10rpx;
+  overflow: hidden; /* 添加overflow属性 */
+}
+
+
+.avatar {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 25rpx;
+  margin-left: 10rpx;
+  margin-right: 10rpx;
+  flex-shrink: 0; /* 添加flex-shrink属性 */
+}
+
+.sender {
+  font-size: 16rpx;
+  color: #319b3a;
+  margin-bottom: 5rpx;
+}
+
+
+.content {
+  display: inline-block;
+  padding: 10rpx 15rpx;
+  background-color: #f4f4f4;
+  border-radius: 10rpx;
+  word-wrap: break-word;
+  word-break: break-all;
+  font-size: 28rpx;
+  color: #333;
+  max-width: 80%; /* 修改max-width属性 */
+}
+
+.my-message {
+  flex-direction: row-reverse;
+  align-items: flex-start; /* 添加align-items属性 */
+}
+
+.my-avatar {
+  margin-left: 10rpx;
+  flex-shrink: 0; /* 添加flex-shrink属性 */
+}
+
+.my-sender {
+  text-align: right;
+}
+.my-content {
+  background-color: #ff00049c;
+  color: #fff;
+  max-width: 100%; /* 修改max-width属性 */
+}
+
+.input-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10rpx;
+  box-sizing: border-box;
+  background-color:#ffffff;
+  position: fixed;
+  bottom: 60rpx;
+  left: 2.5%;
+  width: 95%;
+  z-index: 100;
+}
+
+.input-msg {
+  flex: 1;
+  height: 70rpx;
+  border: none;
+  border-radius: 20rpx;
+  background-color: #f4f4f4c4;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  font-size: 23rpx;
+  color: #333;
+}
+
+.send-button {
+  width: 100rpx;
+  height: 70rpx;
+  background-color: #ff00378e;
+  border: none;
+  margin-left: 20rpx;
+  border-radius: 20rpx;
+  color: #fff;
+  font-size: 23rpx;
+  text-align: center;
+}
+
+.send-button view{
+  line-height: 70rpx;
+}
+
+/* iPhone X下的状态栏 */
+.status-bar {
+  height: env(safe-area-inset-top);
+  background-color: #fff;
+}

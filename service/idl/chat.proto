@@ -1,0 +1,13 @@
+syntax = "proto3";
+package chat;
+
+import "common.proto";
+
+message ChatRequest {
+    string content = 1;
+}
+
+message ChatResponse {
+    common.BaseResponse base_resp = 1;
+    string content = 2;
+}

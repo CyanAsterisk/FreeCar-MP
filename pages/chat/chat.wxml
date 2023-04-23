@@ -1,0 +1,19 @@
+<view class="container">
+  <scroll-view class="chat-box" scroll-y="true" scroll-into-view="{{toView}}" scroll-with-animation>
+    <view wx:for="{{messageList}}" wx:key="index" class="message{{item.isMyself ? ' my-message' : ''}}">
+      <image class="avatar{{item.isMyself ? ' my-avatar' : ''}}" src="{{item.isMyself ? '/images/shared/fake-avatar.png' : '/images/chat/gpt.png'}}" mode="aspectFill"></image>
+      <view class="message-content">
+        <view class="sender{{item.isMyself ? ' my-sender' : ''}}">{{item.sender}}</view>
+        <view class="content{{item.isMyself ? ' my-content' : ''}}">{{item.content}}</view>
+      </view>
+    </view>
+    <view id="{{toView}}" class="scroll-to"></view>
+  </scroll-view>
+  <view class="status-bar"></view>
+  <view class="input-box">
+    <input class="input-msg" placeholder="输入问题" bindinput="inputChange" value="{{inputValue}}"/>
+    <button class="send-button" bindtap="sendMessage">
+      <view>发送</view>
+    </button>
+  </view>
+</view>

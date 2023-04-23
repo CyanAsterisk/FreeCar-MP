@@ -1,0 +1,12 @@
+<!-- wallet.wxml -->
+<view class="wallet">
+  <image class= "logo" src="../../images/wallet/coin.png"/>
+  <view class="balance">
+    <text class="balance-label">账户余额</text>
+    <text class="balance-value">￥{{balance}}</text>
+  </view>
+  <view class="buttons">
+    <button class="button recharge" bindtap="recharge">充值</button>
+    <button class="button withdraw" bindtap="withdraw">提现</button>
+  </view>
+</view>

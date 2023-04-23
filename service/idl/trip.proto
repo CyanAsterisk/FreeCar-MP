@@ -1,0 +1,80 @@
+syntax = "proto3";
+package trip;
+
+import "common.proto";
+
+
+message Location {
+    double latitude = 1;
+    double longitude = 2;
+}
+
+message LocationStatus{
+    Location location = 1;
+    int32 fee_cent = 2;
+    double km_driven = 3;
+    string poi_name = 4;
+    int64 timestamp_sec = 5;
+}
+
+enum TripStatus {
+    TS_NOT_SPECIFIED = 0;
+    IN_PROGRESS = 1;
+    FINISHED = 2;
+}
+
+message TripEntity{
+    string id = 1;
+    Trip trip = 2;
+}
+
+message Trip{
+    int64 account_id = 1;
+    string car_id = 2;
+    LocationStatus start = 3;
+    LocationStatus current = 4;
+    LocationStatus end = 5;
+    TripStatus status = 6;
+    string identity_id = 7;
+}
+
+
+message CreateTripRequest {
+    Location start = 1;
+    string car_id = 2;
+    string avatar_url = 3;
+}
+
+message CreateTripResponse{
+    common.BaseResponse base_resp = 1;
+    TripEntity trip_entity = 2;
+}
+
+message GetTripRequest{
+    string id = 1;
+}
+
+message GetTripResponse{
+    common.BaseResponse base_resp = 1;
+    Trip trip = 2;
+}
+
+message GetTripsRequest{
+    TripStatus status = 1;
+}
+
+message GetTripsResponse{
+    common.BaseResponse base_resp = 1;
+    repeated TripEntity trips = 2;
+}
+
+message UpdateTripRequest{
+    string id = 1;
+    Location current = 2;
+    bool end_trip = 3;
+}
+
+message UpdateTripResponse{
+    common.BaseResponse base_resp = 1;
+    Trip trip = 2;
+}
