@@ -1,7 +1,7 @@
 import { car } from "../../service/gen/car/car_pb"
 import {trip} from "../../service/gen/trip/trip_pb"
 import { CarService } from "../../service/pkg/car"
-import { CalculDistance } from "../../utils/pos"
+import { Nearby, CalculDistance } from "../../utils/pos"
 import { TripService } from "../../service/pkg/trip"
 import { routing } from "../../utils/routing"
 import { ProfileService } from "../../service/pkg/profile"
@@ -158,28 +158,33 @@ Page({
       let  cars: Car[] = []
       let markers: Marker[] = []
       for(let cr of cs){
-        if(cr.car?.status !== car.CarStatus.LOCKED) continue;
+        if(cr.car?.status !== car.CarStatus.LOCKED) continue;       
         const c: Car = {
           id: cr.id!,
           plateNum: cr.car.plateNum!,
           power: (cr.car.power!).toFixed(2)+"%",
           position: {
-            latitude:cr.car.position!.latitude! || initialLat,
-            longitude: cr.car.position!.longitude! || initialLng,
+            latitude: cr.car.position?.latitude!,
+            longitude: cr.car.position?.longitude!,
           },
           canLock: false,
           distance: '',
         }
+
+        if (cr.car.position?.latitude === 0 || cr.car.position?.longitude === 0) {
+          c.position = Nearby({latitude:initialLat,longitude:initialLng})
+        }
+
         let dist = CalculDistance(c.position,this.data.location)/1e7
-        c.distance = dist.toFixed(2) + '公里'
+        c.distance = dist.toFixed(2)
         if(cars.length < 2){
           c.canLock = true;
         } 
         cars.push(c)
         markers.push({
           id:markers.length,
-          latitude:cr.car.position!.latitude! || initialLat,
-          longitude: cr.car.position!.longitude! || initialLng,
+          latitude:c.position.latitude,
+          longitude: c.position.longitude,
           iconPath: '/images/cars/car-pos.svg',
           width: 20,
           height:20,

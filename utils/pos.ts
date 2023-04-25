@@ -13,3 +13,10 @@ interface position{
     latitude: number,
     longitude: number
 }
+
+export function Nearby(p1 :position){
+  return {
+    latitude: p1.latitude + Math.random() * 0.01, 
+    longitude: p1.longitude + Math.random() * 0.01,
+  }
+}
