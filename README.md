@@ -1,4 +1,4 @@
-![FreeCar-MP](images/doc/FreeCar%20MP.png)
+![FreeCar-MP](images/doc/FreeCar_MP.png)
 
 English | [中文](README_zh.md)
 

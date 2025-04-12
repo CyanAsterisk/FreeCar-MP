@@ -12,7 +12,7 @@ export namespace UserService {
 
     export function updateUserInfo(req :user.IUpdateUserRequest): Promise<user.IUpdateUserResponse> {
         return FreeCar.sendRequestWithAuthRetry({
-            method: 'POST',
+            method: 'PUT',
             path: '/user/info',
             data: req,
             respMarshaller: user.UpdateUserResponse.fromObject

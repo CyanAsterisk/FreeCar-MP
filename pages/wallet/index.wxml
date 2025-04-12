@@ -5,8 +5,69 @@
     <text class="balance-label">账户余额</text>
     <text class="balance-value">￥{{balance}}</text>
   </view>
+
+  <view class="recharge-container">
+    <view class="recharge-title">请选择充值金额</view>
+    <view class="recharge-options">
+      <view class="recharge-option {{selectedAmount === '10' ? 'selected' : ''}}" 
+            bindtap="selectAmount" data-amount="10">
+        <text>￥10</text>
+      </view>
+      <view class="recharge-option {{selectedAmount === '50' ? 'selected' : ''}}" 
+            bindtap="selectAmount" data-amount="50">
+        <text>￥50</text>
+      </view>
+      <view class="recharge-option {{selectedAmount === '100' ? 'selected' : ''}}" 
+            bindtap="selectAmount" data-amount="100">
+        <text>￥100</text>
+      </view>
+      <view class="recharge-option {{selectedAmount === 'custom' ? 'selected' : ''}}" 
+            bindtap="selectCustomAmount">
+        <text>其他金额</text>
+      </view>
+    </view>
+    
+    <view class="custom-amount" wx:if="{{showCustomAmount}}">
+      <input type="digit" placeholder="请输入充值金额" model:value="{{customAmount}}" />
+    </view>
+  </view>
+
   <view class="buttons">
-    <button class="button recharge" bindtap="recharge">充值</button>
-    <button class="button withdraw" bindtap="withdraw">提现</button>
+    <button class="button recharge" bindtap="recharge">确认充值</button>
+  </view>
+</view>
+
+<!-- 自定义支付确认弹窗 -->
+<view class="payment-modal" wx:if="{{showPaymentModal}}">
+  <view class="payment-content">
+    <view class="payment-header">
+      <text class="payment-title">支付确认</text>
+      <view class="payment-close" bindtap="cancelPayment" wx:if="{{!paymentProcessing}}">×</view>
+    </view>
+    
+    <view class="payment-amount">
+      <text class="payment-amount-label">充值金额</text>
+      <text class="payment-amount-value">￥{{paymentAmount}}</text>
+    </view>
+    
+    <view class="payment-method">
+      <view class="payment-method-item">
+        <image class="payment-method-icon" src="../../images/doc/FreeCar_MP.png"></image>
+        <text class="payment-method-name">FreeCar 钱包</text>
+        <view class="payment-method-selected"></view>
+      </view>
+    </view>
+    
+    <view class="payment-progress" wx:if="{{paymentProcessing}}">
+      <view class="payment-progress-inner" style="width: {{paymentProgress}}%;"></view>
+    </view>
+    
+    <view class="payment-action">
+      <button class="payment-button {{paymentProcessing ? 'processing' : ''}}" 
+              bindtap="confirmPayment" 
+              disabled="{{paymentProcessing}}">
+        {{paymentProcessing ? '支付处理中...' : '确认支付'}}
+      </button>
+    </view>
   </view>
 </view>

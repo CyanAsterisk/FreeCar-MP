@@ -9,60 +9,333 @@ page{
   flex-direction: column;
   align-items: center;
   height: 100%;
-  background-color: #FFFFFF;
+  background-color: #f8f8f8;
+  padding-bottom: 60rpx;
 }
 
 .logo {
-  width: 120rpx;
-  height: 120rpx;
+  width: 150rpx;
+  height: 150rpx;
   border-radius: 50%;
   background-color: #FFFFFF;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
   background-size: cover;
-  margin-top: 200rpx;
+  margin-top: 80rpx;
 }
 
 .balance {
   display: flex;
   flex-direction: column;
-  margin-top: 60rpx;
-  
+  margin-top: 40rpx;
   align-items: center;
+  background: linear-gradient(180deg, #ffffff, #f3f9f4);
+  padding: 30rpx 60rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(9, 187, 39, 0.1);
+  width: 80%;
 }
 
 .balance-label {
-  font-size: 15px;
+  font-size: 32rpx;
+  color: #666;
 }
 
 .balance-value {
-  margin-top: 10rpx;
-  font-size: 28px;
+  margin-top: 20rpx;
+  font-size: 60rpx;
   font-weight: bold;
+  color: #09bb27;
+}
+
+.recharge-container {
+  width: 90%;
+  margin-top: 60rpx;
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.recharge-title {
+  font-size: 32rpx;
+  margin-bottom: 40rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.recharge-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.recharge-option {
+  width: 48%;
+  height: 100rpx;
+  background-color: #f5f5f5;
+  border-radius: 12rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30rpx;
+  border: 2rpx solid #f5f5f5;
+  transition: all 0.3s;
+  font-size: 34rpx;
+}
+
+.recharge-option.selected {
+  border: 2rpx solid #09bb27;
+  background-color: #e6f7e9;
+}
+
+.custom-amount {
+  margin-top: 20rpx;
+  width: 100%;
+}
+
+.custom-amount input {
+  width: 100%;
+  height: 100rpx;
+  background-color: #f5f5f5;
+  border-radius: 12rpx;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  font-size: 32rpx;
 }
 
 .buttons {
-  margin-top: 400rpx;
+  margin-top: 80rpx;
   display: flex;
   flex-direction: column;
-  width: 300rpx;
+  width: 90%;
+  max-width: 600rpx;
 }
 
 .button {
-  height: 80rpx;
-  margin: 10px 0;
-  padding: 10px 20px;
-  font-size: 15px;
+  height: 90rpx;
+  margin: 15rpx 0;
+  padding: 0;
+  font-size: 34rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 12rpx;
 }
+
 .recharge {
-  background-color: #09bb27;
+  background: linear-gradient(135deg, #09bb27, #07a823);
   color: #FFFFFF;
+  box-shadow: 0 6rpx 15rpx rgba(9, 187, 39, 0.2);
+  border: none;
 }
 
-.withdraw {
-  background-color: #f2f2f2;
-  color:  #09bb27;
+.records {
+  background-color: #FFFFFF;
+  color: #333333;
+  border: 1rpx solid #ddd;
 }
 
+/* 支付弹窗样式 */
+.payment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.payment-content {
+  width: 85%;
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 50rpx 40rpx;
+  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50rpx); opacity: 0.8; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50rpx;
+}
+
+.payment-title {
+  font-size: 38rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.payment-close {
+  font-size: 48rpx;
+  color: #999;
+  padding: 10rpx;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.payment-close:active {
+  background-color: #f0f0f0;
+}
+
+.payment-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60rpx;
+}
+
+.payment-amount-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+
+.payment-amount-value {
+  font-size: 76rpx;
+  font-weight: bold;
+  color: #333;
+  font-family: 'DIN Alternate', sans-serif;
+}
+
+.payment-method {
+  margin-bottom: 60rpx;
+}
+
+.payment-method-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  background-color: #f9f9f9;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+  border: 2rpx solid #eaeaea;
+  transition: all 0.3s;
+}
+
+.payment-method-item:active {
+  background-color: #f0f0f0;
+}
+
+.payment-method-icon {
+  width: 70rpx;
+  height: 70rpx;
+  margin-right: 25rpx;
+  border-radius: 50%;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.payment-method-name {
+  flex: 1;
+  font-size: 34rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.payment-method-selected {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background-color: #09bb27;
+  position: relative;
+  box-shadow: 0 2rpx 6rpx rgba(9, 187, 39, 0.3);
+}
+
+.payment-method-selected:after {
+  content: '';
+  position: absolute;
+  top: 12rpx;
+  left: 14rpx;
+  width: 15rpx;
+  height: 8rpx;
+  border-left: 4rpx solid #fff;
+  border-bottom: 4rpx solid #fff;
+  transform: rotate(-45deg);
+}
+
+.payment-progress {
+  height: 12rpx;
+  background-color: #f0f0f0;
+  border-radius: 6rpx;
+  margin: 40rpx 0 60rpx;
+  overflow: hidden;
+}
+
+.payment-progress-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #09bb27, #0dd130);
+  transition: width 0.5s ease;
+  border-radius: 6rpx;
+  box-shadow: 0 0 4rpx rgba(9, 187, 39, 0.3);
+}
+
+.payment-action {
+  display: flex;
+  justify-content: center;
+}
+
+.payment-button {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #09bb27, #07a823);
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 36rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 8rpx 20rpx rgba(9, 187, 39, 0.2);
+  transition: all 0.3s;
+}
+
+.payment-button:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 10rpx rgba(9, 187, 39, 0.2);
+}
+
+.payment-button.processing {
+  background: linear-gradient(135deg, #09bb27, #07a823);
+  opacity: 0.8;
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-button.processing::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(400%); }
+}

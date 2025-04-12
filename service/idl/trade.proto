@@ -1,0 +1,13 @@
+syntax = "proto3";
+package trade;
+
+import "common.proto";
+
+message RechargeRequest {
+  int32 amount = 1;
+}
+
+message RechargeResponse {
+  int32 code = 1;
+  string msg = 2;
+}

@@ -4,8 +4,9 @@ import { user } from "../gen/user/user_pb"
 import {common} from "../gen/common/common_pb"
 
 export namespace FreeCar {
-    export const serverAddr = '<your-server-addr>'
-    export const wsAddr = '<your-ws-addr>'
+    export const serverAddr = 'http://127.0.0.1:8080'
+    export const javaServerAddr = 'http://127.0.0.1:8099'
+    export const wsAddr = 'ws://127.0.0.1:9090'
     const AUTH_ERR = 'AUTH_ERR'
 
     const authData = {
@@ -36,6 +37,27 @@ export namespace FreeCar {
                 authData.token = ''
                 await login()
                 return sendRequestWithAuthRetry(o, {
+                    attachAuthHeader: authOpt.attachAuthHeader,
+                    retryOnAuthError: false,
+                })
+            } else {
+                throw err
+            }
+        }
+    }
+
+    export async function sendJavaRequestWithAuthRetry<REQ, RES>(o: RequestOption<REQ, RES>, a?: AuthOption): Promise<RES> {
+        const authOpt = a || {
+            attachAuthHeader: true,
+            retryOnAuthError: true,
+        }
+        try {
+            return sendJavaRequest(o, authOpt)
+        } catch (err) {
+            if (err === AUTH_ERR && authOpt.retryOnAuthError) {
+                authData.token = ''
+                await login()
+                return sendJavaRequestWithAuthRetry(o, {
                     attachAuthHeader: authOpt.attachAuthHeader,
                     retryOnAuthError: false,
                 })
@@ -79,6 +101,40 @@ export namespace FreeCar {
                 enableHttp2: true,
                 method: o.method,
                 data:decamelizeKeysDeep(o.data),
+                header,
+                success: res => {
+                    if (res.statusCode === 401) {
+                        reject(AUTH_ERR)
+                    } else if (res.statusCode >= 400) {
+                        reject(res)
+                    } else {
+                        resolve(o.respMarshaller(
+                            camelcaseKeys(res.data as object, {
+                                deep: true,
+                            })))
+                    }
+                },
+                fail: reject,
+            })
+        })
+    }
+
+    function sendJavaRequest<REQ, RES>(o: RequestOption<REQ, RES>, a: AuthOption): Promise<RES> {
+        return new Promise((resolve, reject) => {
+            const header: Record<string, any> = {}
+            if (a.attachAuthHeader) {
+                if (authData.token) {
+                    header.authorization = 'Bearer ' + authData.token
+                } else {
+                    reject(AUTH_ERR)
+                    return
+                }
+            }
+            wx.request({
+                url: javaServerAddr + o.path,
+                enableHttp2: true,
+                method: o.method,
+                data: decamelizeKeysDeep(o.data),
                 header,
                 success: res => {
                     if (res.statusCode === 401) {

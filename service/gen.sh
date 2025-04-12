@@ -19,3 +19,4 @@ genProto car
 genProto profile
 genProto common
 genProto chat
+genProto trade
