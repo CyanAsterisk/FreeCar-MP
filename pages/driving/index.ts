@@ -131,7 +131,7 @@ Page({
             success: (res)=>{
               if(res.confirm){  
                 TripService.finishTrip(this.tripID,this.data.location).then(() => {
-                    wx.redirectTo({
+                    wx.switchTab({
                         url: routing.trip(),
                     }).then()
                 }).catch(err => {
@@ -147,7 +147,7 @@ Page({
     },
 
     onHangUpTap(){
-        wx.redirectTo({
+        wx.switchTab({
             url: routing.index(),
         }).then()
     },

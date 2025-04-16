@@ -132,7 +132,7 @@ Page({
         // 记录失败的充值
         throw new Error(resp.msg || '充值失败')
       }
-    } catch (err: any) {
+    } catch (err) {
       this.setData({
         showPaymentModal: false,
         paymentProcessing: false,
