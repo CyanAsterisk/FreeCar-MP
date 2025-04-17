@@ -1,7 +1,7 @@
 <view class="container">
   <scroll-view class="chat-box" scroll-y="true" scroll-into-view="{{toView}}" scroll-with-animation>
     <view wx:for="{{messageList}}" wx:key="index" class="message{{item.isMyself ? ' my-message' : ''}}">
-      <image class="avatar{{item.isMyself ? ' my-avatar' : ''}}" src="{{item.isMyself ? '/images/shared/fake-avatar.png' : '/images/chat/gpt.png'}}" mode="aspectFill"></image>
+      <image class="avatar{{item.isMyself ? ' my-avatar' : ''}}" src="{{item.isMyself ? '/images/shared/default.png' : '/images/chat/gpt.png'}}" mode="aspectFill"></image>
       <view class="message-content">
         <view class="sender{{item.isMyself ? ' my-sender' : ''}}">{{item.sender}}</view>
         <view class="content{{item.isMyself ? ' my-content' : ''}}">{{item.content}}</view>

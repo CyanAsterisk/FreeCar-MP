@@ -39,14 +39,12 @@ Page({
   },
   // 发送请求给AI
   async sendAIRequest(content : string) {
-    // TODO: 发送HTTP请求给AI服务器，并处理返回的消息
-
     let resp = await ChatService.getAIAnswer({content: content})
     if (resp.baseResp?.statusCode !== 0) {
         console.error("发送消息失败")
     }
     let newMessage = {
-      sender: 'GPT',
+      sender: 'FreeCar智能客服',
       content: resp.content!,
       isMyself: false,
     }
